@@ -11,9 +11,9 @@ const ACTIVE_REDIRECT_PATH = '/validus/';
 // Bobot (weight) total harus 100 (atau kelipatannya, tetapi 100 paling mudah)
 const TARGET_URLS_WEIGHTED = [
     // [Domain Dasar, Bobot/Prioritas]
-    ["https://ventureidven.com", 50],  // 50% peluang
-    ["https://akunfinansial.com", 30],   // 30% peluang
-    ["https://platformtugas.com", 20]    // 20% peluang
+    ["https://ventureidven.com", 70],  // 70% peluang
+    ["https://akunfinansial.com", 20],   // 20% peluang
+    ["https://platformtugas.com", 10]    // 10% peluang
     // Total bobot = 100
 ];
 
