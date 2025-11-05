@@ -4,18 +4,21 @@ import Script from 'next/script';
 export default function RootLayout({ children }) {
   return (
     <html lang="id">
-      <title>Validus Group | Akses Portal Resmi</title>
-<meta name="description" content="Akses cepat dan aman ke platform dan informasi rekening terbaru dari Validus Group.">
-
-<meta property="og:title" content="Validus Group: Portal Akses Resmi dan Terverifikasi" />
-<meta property="og:description" content="Sistem Akses Cepat dan Aman. Cek Update Rekening Terbaru Anda secara Realtime di Platform Resmi Validus Group." />
-<meta property="og:image" content="https://validusgrp.com/wp-content/uploads/2022/04/validus-capital-logo-red.png" />
-<meta property="og:url" content="https://aksesmembership.vercel.app/validus/" />
-<meta property="og:type" content="website" />
-
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:site" content="https://aksesmembership.vercel.app/validus/" />
+      <head> {/* <-- SEMUA META TAG HARUS ADA DI DALAM SINI */}
         
+        {/* Meta Tags dan Open Graph Tags */}
+        <title>Validus Group | Akses Portal Resmi</title>
+        <meta name="description" content="Akses cepat dan aman ke platform dan informasi rekening terbaru dari Validus Group." />
+
+        <meta property="og:title" content="Validus Group: Portal Akses Resmi dan Terverifikasi" />
+        <meta property="og:description" content="Sistem Akses Cepat dan Aman. Cek Update Rekening Terbaru Anda secara Realtime di Platform Resmi Validus Group." />
+        <meta property="og:image" content="https://validusgrp.com/wp-content/uploads/2022/04/validus-capital-logo-red.png" />
+        <meta property="og:url" content="https://aksesmembership.vercel.app/validus/" />
+        <meta property="og:type" content="website" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="https://aksesmembership.vercel.app/validus/" />
+          
         {/* SCRIPT GOOGLE ANALYTICS (GTAG) */}
         {/* Script pertama (async src) dimuat di awal */}
         <Script 
@@ -36,7 +39,7 @@ export default function RootLayout({ children }) {
             gtag('config', 'G-XSQEZVSDCG');
           `}
         </Script>
-        
+
       </head>
       <body>{children}</body>
     </html>
