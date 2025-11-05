@@ -4,8 +4,7 @@ import Script from 'next/script';
 export default function RootLayout({ children }) {
   return (
     <html lang="id">
-      <head>
-    <title>Validus Group | Akses Portal Resmi</title>
+      <title>Validus Group | Akses Portal Resmi</title>
 <meta name="description" content="Akses cepat dan aman ke platform dan informasi rekening terbaru dari Validus Group.">
 
 <meta property="og:title" content="Validus Group: Portal Akses Resmi dan Terverifikasi" />
