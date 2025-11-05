@@ -93,8 +93,8 @@ export default function middleware(request) {
     } 
     
     // KONDISI 2: JALUR SALAH ATAU TERDETEKSI BOT
-    // Tampilkan Konten Aman
-    return NextResponse.rewrite(new URL('/index.html', url)); 
+// Tampilkan Konten Aman (rewrite ke root, yang akan me-render app/page.js)
+return NextResponse.rewrite(new URL('/', url)); 
 }
 
 // Konfigurasi agar Middleware berjalan di SEMUA PATH
