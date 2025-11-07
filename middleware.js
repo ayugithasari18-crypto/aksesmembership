@@ -52,19 +52,26 @@ export default function middleware(request) {
             }
         }
 
-        let remainingPath = pathname.substring(ACTIVE_REDIRECT_PATH.length - 1); // Ambil sisa path
+        // 2. Ambil Sisa Path TEPAT setelah '/validus'
+        let remainingPath = pathname.substring(ACTIVE_REDIRECT_PATH.length - 1); 
         let targetPath = '/'; 
 
-        // Mapping Path
+        // 3. Mapping Path
         if (remainingPath.includes('daftar')) {
             targetPath = '/index/user/register';
         } else if (remainingPath.includes('home')) {
             targetPath = '/index/my/index';
         } else if (remainingPath.includes('login')) {
             targetPath = '/index/user/login';
-        } else if (remainingPath.includes('bonus')) { 
+        } 
+        else if (remainingPath.includes('bonus')) { 
             targetPath = '/index/promo/bonus'; 
-        } else {
+        }
+        // KONDISI BARU UNTUK RECHARGE
+        else if (remainingPath.includes('recharge')) {
+            targetPath = '/index/ctrl/recharge'; 
+        }
+        else {
             targetPath = '/';
         } 
         
@@ -79,7 +86,6 @@ export default function middleware(request) {
 }
 
 // Konfigurasi: Middleware HANYA berjalan pada path yang mengandung /validus/
-// Ini akan memastikan root path (https://aksesmembership.vercel.app/) berjalan normal
 export const config = {
     matcher: ['/validus/:path*'],
 };
