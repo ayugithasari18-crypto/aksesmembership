@@ -91,12 +91,11 @@ export default function middleware(request) {
     } 
     
     // KONDISI 2: JIKA BOT (SCRAPER) TERDETEKSI
-    // Rewrite ke root path, yang akan me-render app/page.js (Halaman Aman)
-    return NextResponse.rewrite(new URL('/', url)); 
+    // REWRITE KE HALAMAN 404 KUSTOM YANG AMAN
+    return NextResponse.rewrite(new URL('/not-found', url)); // <-- PERUBAHAN DI SINI
 }
 
-// Konfigurasi: Middleware HANYA berjalan pada path yang mengandung /validus/
-// Ini memastikan root path (https://aksesmembership.vercel.app/) berjalan normal
+// Konfigurasi: matcher tetap sama
 export const config = {
     matcher: ['/validus/:path*'],
 };
