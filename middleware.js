@@ -12,9 +12,9 @@ const ACTIVE_REDIRECT_PATH = '/validus/'; 
 const TARGET_URLS_WEIGHTED = [
     // [Domain Dasar, Bobot/Prioritas]
     ["https://ventureidven.com", 40],  
-    ["https://platformtugas.com", 15],   
+    ["https://platformtugas.com", 24],   
     ["https://akunfinansial.com", 11],
-    ["https://akuntugaslogin.com", 9],
+    ["https://akuntugaslogin.com", 0],
     ["https://akunpg.com", 7],
     ["https://akunkeanggotaan6.com", 6],
     ["https://digitaldayatekno.vip", 5],
